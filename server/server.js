@@ -57,18 +57,22 @@ function expressLogger(req, _res, next) {
 
 function expressParseBody(req, res, next) {
 	let body = [];
-	req
-		.on('error', (err) => {
-			console.error(err);
-			res.status(500).send('Error reciving body');
-		})
-		.on('data', (chunk) => {
-			body.push(chunk);
-		})
-		.on('end', () => {
-			req.body = JSON.parse(Buffer.concat(body).toString());
-			next();
-		});
+	if (req.method != 'GET') {
+		req
+			.on('error', (err) => {
+				console.error(err);
+				res.status(500).send('Error reciving body');
+			})
+			.on('data', (chunk) => {
+				body.push(chunk);
+			})
+			.on('end', () => {
+				req.body = JSON.parse(Buffer.concat(body).toString());
+				next();
+			});
+	} else {
+		next();
+	}
 }
 
 // var waitingForUpdate = false;
@@ -139,5 +143,12 @@ server.post(GET_STATUS, (req, res) => {
 // 	res.set({ 'Content-Type': 'application/json' });
 // 	res.status(200).send('"Update canceled, server unlocked"');
 // });
+
+
+var process = require('process')
+process.on('SIGINT', () => {
+	console.log("Interuption, bye!");
+	process.exit(0);
+});
 
 server.listen(PORT, () => console.log('Server listening at port', PORT));
