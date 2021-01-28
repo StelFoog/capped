@@ -1,5 +1,6 @@
 // const http = require('http');
 const express = require('express');
+var process = require('process');
 const {
 	init,
 	resetTokens,
@@ -70,9 +71,7 @@ function expressParseBody(req, res, next) {
 				req.body = JSON.parse(Buffer.concat(body).toString());
 				next();
 			});
-	} else {
-		next();
-	}
+	} else next();
 }
 
 // var waitingForUpdate = false;
@@ -144,8 +143,6 @@ server.post(GET_STATUS, (req, res) => {
 // 	res.status(200).send('"Update canceled, server unlocked"');
 // });
 
-
-var process = require('process')
 process.on('SIGINT', () => {
 	console.log("Interuption, bye!");
 	process.exit(0);
