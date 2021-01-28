@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const MAX_TOKENS = 40;
-const DATA_PATH = 'server/data.json';
+const DATA_PATH = process.env.DATA_PATH || 'server/data.json';
 
 const SUC_TOKEN_TAKEN = 'S: A token was taken';
 const SUC_TOKEN_RELEASED = 'S: A token was released';
