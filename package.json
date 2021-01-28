@@ -1,0 +1,16 @@
+{
+  "name": "capped-kistan",
+  "version": "0.1.0",
+  "description": "The Capped system for Kistan 2.0",
+  "author": "Samuel H.E. Larsson <samuellarsson@insektionen.se>",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "server": "node server/server.js",
+    "client": "node client/client.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "node-schedule": "^1.3.2"
+  }
+}
