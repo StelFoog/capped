@@ -7,7 +7,7 @@
 ### Docker
 - **Server** (From top dir)
   - **Build image:** `$ docker build -t capped .`
-  - **Run container:** `$ docker run -v $(pwd)/datafile.json:/data.json -e DATA_PATH=/data.json -p 8080:8080`
+  - **Run container:** `$ docker run -d -v $(pwd)/data.json:/data.json -e DATA_PATH=/data.json -e PROXY=/capped/api -p 8080:8080 capped`
 - **Client** (Not finished)
 
 ### Testing
