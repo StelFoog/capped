@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const MAX_TOKENS = 40;
-const DATA_PATH = process.env.DATA_PATH || 'server/data.json';
+const DATA_PATH = process.env.DATA_PATH || 'example/data.json';
 
 const SUC_TOKEN_TAKEN = 'S: A token was taken';
 const SUC_TOKEN_RELEASED = 'S: A token was released';
@@ -26,12 +26,14 @@ function readData() {
 		console.log('data already loaded, did not read file');
 		return;
 	}
-	fs.readFile('server/data.json', 'UTF-8', (error, dat) => {
+	console.log('Begining read from', DATA_PATH);
+	fs.readFile(DATA_PATH, 'UTF-8', (error, dat) => {
 		if (error) {
 			console.log(error);
 			return;
 		}
 		data = JSON.parse(dat);
+		console.log('data loaded');
 	});
 }
 
@@ -40,7 +42,7 @@ function writeData() {
 		console.log('data not loaded, did not write file');
 		return;
 	}
-	fs.writeFile('server/data.json', JSON.stringify(data), (err) => {
+	fs.writeFile(DATA_PATH, JSON.stringify(data), (err) => {
 		if (err) console.log('Error writing file', err);
 	});
 }

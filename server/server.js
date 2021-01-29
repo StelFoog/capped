@@ -21,31 +21,12 @@ const {
 	MAKE_USER,
 	GET_STATUS,
 } = require('../shared/constants');
-const DBG_UPDATE = 'dgb-update';
-const DBG_UNLOCK = 'dbg-unlock';
+// const DBG_UPDATE = 'dgb-update';
+// const DBG_UNLOCK = 'dbg-unlock';
 const PORT = '8080';
+const PROXYHOST = process.env.PROXY || false;
 
 // helper functions
-// function workPostRequest(req, fn) {
-// 	let body = [];
-// 	req
-// 		.on('error', (err) => {
-// 			console.error(err);
-// 		})
-// 		.on('data', (chunk) => {
-// 			body.push(chunk);
-// 		})
-// 		.on('end', () => {
-// 			const args = JSON.parse(Buffer.concat(body).toString());
-// 			fn(args);
-// 		});
-// }
-
-// function throw404(res) {
-// 	res.statusCode = 404;
-// 	res.send();
-// }
-
 function standardResponse(res, obj) {
 	res.set({ 'Content-Type': 'application/json' });
 	res.send(JSON.stringify(obj));
@@ -74,6 +55,12 @@ function expressParseBody(req, res, next) {
 	} else next();
 }
 
+function onProxy(req, _res, next) {
+	if (req.url.substring(0, PROXYHOST.length) === PROXYHOST)
+		req.url = req.url.slice(PROXYHOST.length);
+	next();
+}
+
 // var waitingForUpdate = false;
 // function readyForUpdate(req, res, next) {
 // 	if (!waitingForUpdate) next();
@@ -91,6 +78,7 @@ console.log('Server initialized');
 server.use(expressLogger);
 // server.use(readyForUpdate);
 server.use(expressParseBody);
+if (PROXYHOST) server.use(onProxy);
 
 // The running server
 // TODO: there should probably be a SSE for when available tokens are updated
@@ -101,6 +89,7 @@ server.get(SERVER_FRONT, (_req, res) => {
 		'<h1>Capped Kistan Server</h1><br><p>This is a server; not a website ...so what are you doing here?</p>'
 	);
 });
+// all of these could be rebuilt since they all do bacically the same things
 server.post(TAKE_TOKEN, (req, res) => {
 	const args = req.body;
 	const status = takeToken(...args);
@@ -143,8 +132,14 @@ server.post(GET_STATUS, (req, res) => {
 // 	res.status(200).send('"Update canceled, server unlocked"');
 // });
 
+// Should maybe so some handling like closing the server and awaiting all requests to resolve.
+// Maybe also save memory to datafile?
 process.on('SIGINT', () => {
-	console.log("Interuption, bye!");
+	console.log('\nInteruption, bye!');
+	process.exit(0);
+});
+process.on('SIGTERM', () => {
+	console.log('\nTermination, bye!');
 	process.exit(0);
 });
 
